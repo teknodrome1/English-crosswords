@@ -53,9 +53,7 @@
       background: #fff;
     }
 
-    .cell.block {
-      background: #000;
-    }
+    .cell.block { background: #000; }
 
     .num {
       position: absolute;
@@ -79,18 +77,14 @@
       pointer-events: none;
     }
 
-    .ch.wrong-letter {
-      color: #c1121f; /* red for wrong letters */
-    }
+    .ch.wrong-letter { color: #c1121f; } /* red for wrong letters */
 
     .cell.selected {
       outline: 3px solid #3b82f6;
       outline-offset: -3px;
     }
 
-    .cell.in-word {
-      background: #eef6ff;
-    }
+    .cell.in-word { background: #eef6ff; }
 
     .cell.block.selected,
     .cell.block.in-word {
@@ -106,15 +100,8 @@
     .blink-red   { animation: blinkRed   420ms ease-in-out 0s 2; }
 
     /* Clues */
-    .panel h2 {
-      margin: 0 0 10px;
-      font-size: 18px;
-    }
-
-    .panel h3 {
-      margin: 14px 0 6px;
-      font-size: 15px;
-    }
+    .panel h2 { margin: 0 0 10px; font-size: 18px; }
+    .panel h3 { margin: 14px 0 6px; font-size: 15px; }
 
     .clues {
       columns: 2;
@@ -150,10 +137,7 @@
     }
     button:hover { background: #f4f4f4; }
 
-    .status {
-      font-size: 13px;
-      color: #333;
-    }
+    .status { font-size: 13px; color: #333; }
 
     /* Hidden input for mobile keyboard reliability */
     input.hidden {
@@ -167,7 +151,7 @@
 </head>
 
 <body>
-  <h1>Crosswords#1 - February 2026</h1>
+  <h1>Crosswords#4 - February 2026</h1>
 
   <p class="instructions">
     Click once to select words <b>ACROSS</b>, click a second time on the square to select the words <b>DOWN</b>.
@@ -229,7 +213,7 @@ const SOLUTION_ROWS = [
 const ACROSS_CLUES = {
   1:  "petty desire to hurt or annoy",
   6:  "outer layer of clothing",
-  10: "pork from a pig’s leg",
+  10: "pork from a pig's leg",
 
   13: "respect or high regard",
   14: "one time; previously",
@@ -264,7 +248,7 @@ const ACROSS_CLUES = {
 
   44: "a single thing on a list",
   46: "every one; the whole amount",
-  47: "“yes” in a vote (old-fashioned)",
+  47: "\"yes\" in a vote (old-fashioned)",
 
   48: "natural view/landscape, especially on stage or outdoors",
   51: "engine; machine that produces motion",
@@ -274,7 +258,7 @@ const ACROSS_CLUES = {
   55: "father (informal)",
 
   58: "to the inside of",
-  59: "instead (as in “in lieu of”)",
+  59: "instead (as in \"in lieu of\")",
   61: "start",
 
   62: "student residence building",
@@ -283,44 +267,338 @@ const ACROSS_CLUES = {
 
   65: "organ of sight",
   66: "fabric shelter",
-  67: "airborne substances (plural)",
+  67: "airborne substances (plural)"
 };
 
 /* DOWN CLUES (list of [number, answer, clue]) */
 const DOWN_LIST = [
-  [1,  "SHUT",       "close firmly"],
-  [2,  "POLO",       "sport played on horseback"],
-  [3,  "INTERFACE",  "point where two systems meet and interact"],
-  [4,  "TORSO",      "the trunk of the body (without head/limbs)"],
-  [5,  "ERA",        "a distinct period of time"],
-  [6,  "COPPER",     "reddish-brown metal; chemical symbol Cu"],
-  [7,  "ONLY",       "just; and no one/nothing else"],
-  [8,  "ACE",        "top card in many games; also, an expert"],
-  [9,  "TEA",        "hot drink made by steeping leaves"],
-  [10, "HAZARDOUS",  "dangerous; risky"],
-  [11, "AGENT",      "person who acts for another; representative"],
-  [12, "MERGE",      "combine into one"],
+  [1,  "SHUT",      "close firmly"],
+  [2,  "POLO",      "sport played on horseback"],
+  [3,  "INTERFACE", "point where two systems meet and interact"],
+  [4,  "TORSO",     "the trunk of the body (without head/limbs)"],
+  [5,  "ERA",       "a distinct period of time"],
+  [6,  "COPPER",    "reddish-brown metal; chemical symbol Cu"],
+  [7,  "ONLY",      "just; and no one/nothing else"],
+  [8,  "ACE",       "top card in many games; also, an expert"],
+  [9,  "TEA",       "hot drink made by steeping leaves"],
+  [10, "HAZARDOUS", "dangerous; risky"],
+  [11, "AGENT",     "person who acts for another; representative"],
+  [12, "MERGE",     "combine into one"],
 
-  [16, "DOOR",       "hinged barrier that opens/closes an entrance"],
+  [16, "DOOR",      "hinged barrier that opens/closes an entrance"],
 
-  [21, "STIR",       "mix with a spoon; also, provoke"],
-  [22, "TOE",        "one digit of the foot"],
-  [24, "USER",       "person who uses something"],
-  [25, "SHOE",       "footwear"],
-  [26, "HEN",        "adult female chicken"],
-  [27, "ODDS",       "chances; likelihood"],
-  [28, "FEEL",       "sense by touch; also, experience an emotion"],
-  [32, "LOWINCOME",  "earning little money"],
-  [33, "TWO",        "the number 2"],
-  [35, "ASPARAGUS",  "green spear-shaped vegetable"],
-  [36, "THEY",       "pronoun for people/things previously mentioned"],
-  [37, "SIDE",       "an edge; one part of something"],
-  [39, "ARMY",       "large organized military force"],
-  [40, "SALT",       "common seasoning; sodium chloride"],
-  [42, "PER",        "for each"],
-  [43, "GLOW",       "shine softly"],
-  [45, "TEE",        "a golf ball support; also a T-shaped pipe fitting"],
-  [46, "AMOUNT",     "quantity; total"],
-  [48, "SLID",       "past tense of “slide” (informal form)"],
-  [49, "CANOE",      "narrow boat paddled by hand"],
-  [50, "ENTRY",      "act of ent]()
+  [21, "STIR",      "mix with a spoon; also, provoke"],
+  [22, "TOE",       "one digit of the foot"],
+  [24, "USER",      "person who uses something"],
+  [25, "SHOE",      "footwear"],
+  [26, "HEN",       "adult female chicken"],
+  [27, "ODDS",      "chances; likelihood"],
+  [28, "FEEL",      "sense by touch; also, experience an emotion"],
+  [32, "LOWINCOME", "earning little money"],
+  [33, "TWO",       "the number 2"],
+  [35, "ASPARAGUS", "green spear-shaped vegetable"],
+  [36, "THEY",      "pronoun for people/things previously mentioned"],
+  [37, "SIDE",      "an edge; one part of something"],
+  [39, "ARMY",      "large organized military force"],
+  [40, "SALT",      "common seasoning; sodium chloride"],
+  [42, "PER",       "for each"],
+  [43, "GLOW",      "shine softly"],
+  [45, "TEE",       "a golf ball support; also a T-shaped pipe fitting"],
+  [46, "AMOUNT",    "quantity; total"],
+  [48, "SLID",      "past tense of slide (informal form)"],
+  [49, "CANOE",     "narrow boat paddled by hand"],
+  [50, "ENTRY",     "act of entering; also, an item on a list/competition"],
+  [52, "OPERA",     "dramatic stage work sung throughout"],
+  [54, "NEON",      "chemical element used in bright signs"],
+  [56, "PIPE",      "hollow tube for carrying liquid/gas"],
+  [57, "ANTS",      "small social insects"],
+  [59, "LIT",       "past tense of light; illuminated"],
+  [60, "ICE",       "frozen water"],
+  [61, "BEG",       "ask urgently; plead"]
+];
+
+const H = 15, W = 15;
+const gridEl = document.getElementById("grid");
+const kbd = document.getElementById("kbd");
+const statusEl = document.getElementById("status");
+
+const isBlock = (r,c) => SOLUTION_ROWS[r][c] === "#";
+const sol = (r,c) => SOLUTION_ROWS[r][c];
+const user = Array.from({length:H}, () => Array.from({length:W}, () => ""));
+
+let dir = "across";
+let selected = {r:0,c:0};
+
+const cellEls = Array.from({length:H}, () => Array.from({length:W}, () => null));
+
+/* compute numbering */
+const nums = Array.from({length:H}, () => Array.from({length:W}, () => null));
+(function computeNumbers(){
+  let n = 1;
+  for (let r=0;r<H;r++){
+    for (let c=0;c<W;c++){
+      if (isBlock(r,c)) continue;
+      const startAcross = (c===0 || isBlock(r,c-1)) && (c+1<W && !isBlock(r,c+1));
+      const startDown   = (r===0 || isBlock(r-1,c)) && (r+1<H && !isBlock(r+1,c));
+      if (startAcross || startDown) nums[r][c] = n++;
+    }
+  }
+})();
+
+function firstOpenCell(){
+  for (let r=0;r<H;r++){
+    for (let c=0;c<W;c++){
+      if (!isBlock(r,c)) return {r,c};
+    }
+  }
+  return {r:0,c:0};
+}
+selected = firstOpenCell();
+
+function renderGrid(){
+  gridEl.innerHTML = "";
+  for (let r=0;r<H;r++){
+    for (let c=0;c<W;c++){
+      const d = document.createElement("div");
+      d.className = "cell" + (isBlock(r,c) ? " block" : "");
+      d.dataset.r = r; d.dataset.c = c;
+
+      if (!isBlock(r,c) && nums[r][c] != null){
+        const n = document.createElement("div");
+        n.className = "num";
+        n.textContent = nums[r][c];
+        d.appendChild(n);
+      }
+
+      if (!isBlock(r,c)){
+        const ch = document.createElement("div");
+        ch.className = "ch";
+        ch.textContent = user[r][c];
+        d.appendChild(ch);
+      }
+
+      d.addEventListener("mousedown", (e)=>{
+        e.preventDefault();
+
+        if (selected.r === r && selected.c === c) {
+          toggleDirInternal();
+        } else {
+          selectCell(r,c);
+        }
+
+        kbd.focus();
+      });
+
+      gridEl.appendChild(d);
+      cellEls[r][c] = d;
+    }
+  }
+  paintSelection();
+}
+
+function setStatus(msg){ statusEl.textContent = msg || ""; }
+
+function setDir(newDir){
+  dir = newDir;
+  document.getElementById("dirLabel").textContent = dir.toUpperCase();
+  paintSelection();
+}
+
+function toggleDirInternal(){
+  setDir(dir === "across" ? "down" : "across");
+}
+
+document.getElementById("toggleDir").addEventListener("click", ()=>{
+  toggleDirInternal();
+  kbd.focus();
+});
+document.getElementById("checkWord").addEventListener("click", ()=>{
+  checkCurrentWord(true);
+  kbd.focus();
+});
+document.getElementById("clearWord").addEventListener("click", ()=>{
+  clearCurrentWord();
+  kbd.focus();
+});
+
+function selectCell(r,c){
+  if (isBlock(r,c)) return;
+  selected = {r,c};
+  paintSelection();
+}
+
+function getWordCells(r,c,dir){
+  let sr=r, sc=c;
+  if (dir==="across"){
+    while (sc>0 && !isBlock(sr, sc-1)) sc--;
+    const cells=[];
+    while (sc<W && !isBlock(sr, sc)) { cells.push({r:sr,c:sc}); sc++; }
+    return cells;
+  } else {
+    while (sr>0 && !isBlock(sr-1, sc)) sr--;
+    const cells=[];
+    while (sr<H && !isBlock(sr, sc)) { cells.push({r:sr,c:sc}); sr++; }
+    return cells;
+  }
+}
+
+function paintSelection(){
+  for (let r=0;r<H;r++){
+    for (let c=0;c<W;c++){
+      const el = cellEls[r][c];
+      if (!el) continue;
+      el.classList.remove("selected","in-word");
+    }
+  }
+
+  const word = getWordCells(selected.r, selected.c, dir);
+  for (const p of word) cellEls[p.r][p.c].classList.add("in-word");
+  cellEls[selected.r][selected.c].classList.add("selected");
+
+  const wStart = word[0];
+  const n = nums[wStart.r][wStart.c];
+  if (n != null){
+    const clue = (dir==="across")
+      ? (ACROSS_CLUES[n] || "")
+      : (DOWN_LIST.find(x=>x[0]===n)?.[2] || "");
+    setStatus(dir.toUpperCase() + " " + n + ": " + clue);
+  } else {
+    setStatus("");
+  }
+}
+
+function move(deltaR, deltaC){
+  let r=selected.r, c=selected.c;
+  while (true){
+    r += deltaR; c += deltaC;
+    if (r<0||r>=H||c<0||c>=W) return;
+    if (!isBlock(r,c)) { selectCell(r,c); return; }
+  }
+}
+
+function nextCell(){ (dir==="across") ? move(0,1) : move(1,0); }
+function prevCell(){ (dir==="across") ? move(0,-1) : move(-1,0); }
+
+function setLetterAt(r,c,letter){
+  user[r][c] = letter;
+  const ch = cellEls[r][c].querySelector(".ch");
+  if (ch) {
+    ch.textContent = letter;
+
+    if (letter && letter.toUpperCase() !== sol(r,c).toUpperCase()) ch.classList.add("wrong-letter");
+    else ch.classList.remove("wrong-letter");
+  }
+}
+
+function blinkCells(cells, color){
+  const cls = (color==="green") ? "blink-green" : "blink-red";
+  for (const p of cells){
+    const el = cellEls[p.r][p.c];
+    el.classList.remove("blink-green","blink-red");
+    void el.offsetWidth;
+    el.classList.add(cls);
+    el.addEventListener("animationend", ()=>el.classList.remove(cls), {once:true});
+  }
+}
+
+function checkWordCells(cells, withBlink){
+  const userWord = cells.map(p => (user[p.r][p.c] || "")).join("");
+  const solWord  = cells.map(p => sol(p.r,p.c)).join("");
+
+  if ([...userWord].some(ch => !ch)) return null;
+
+  const ok = userWord.toUpperCase() === solWord.toUpperCase();
+  if (withBlink) blinkCells(cells, ok ? "green" : "red");
+  return ok;
+}
+
+function checkCurrentWord(withBlink){
+  const cells = getWordCells(selected.r, selected.c, dir);
+  const ok = checkWordCells(cells, withBlink);
+  if (ok === null) { setStatus("Fill the entire word to check."); return false; }
+  setStatus(ok ? "Correct." : "Not correct yet.");
+  return ok;
+}
+
+function clearCurrentWord(){
+  const cells = getWordCells(selected.r, selected.c, dir);
+  for (const p of cells) setLetterAt(p.r,p.c,"");
+  setStatus("Cleared word.");
+}
+
+function handleChar(ch){
+  if (!/^[A-Za-z]$/.test(ch)) return;
+
+  const activeWordCells = getWordCells(selected.r, selected.c, dir);
+
+  setLetterAt(selected.r, selected.c, ch.toUpperCase());
+
+  const complete = activeWordCells.every(p => user[p.r][p.c]);
+
+  nextCell();
+
+  if (complete) {
+    checkWordCells(activeWordCells, true);
+  }
+}
+
+document.addEventListener("keydown", (e)=>{
+  const key = e.key;
+
+  if (key === "Tab") { e.preventDefault(); toggleDirInternal(); return; }
+
+  if (key === "ArrowUp")    { e.preventDefault(); move(-1,0); return; }
+  if (key === "ArrowDown")  { e.preventDefault(); move(1,0);  return; }
+  if (key === "ArrowLeft")  { e.preventDefault(); move(0,-1); return; }
+  if (key === "ArrowRight") { e.preventDefault(); move(0,1);  return; }
+
+  if (key === "Backspace") {
+    e.preventDefault();
+    if (user[selected.r][selected.c]) {
+      setLetterAt(selected.r, selected.c, "");
+    } else {
+      prevCell();
+      setLetterAt(selected.r, selected.c, "");
+    }
+    return;
+  }
+
+  if (key === "Enter") {
+    e.preventDefault();
+    checkCurrentWord(true);
+    return;
+  }
+
+  if (key.length === 1) {
+    e.preventDefault();
+    handleChar(key);
+  }
+});
+
+/* Render clue lists */
+function renderClues(){
+  const acrossEl = document.getElementById("acrossClues");
+  const downEl = document.getElementById("downClues");
+
+  const acrossNums = Object.keys(ACROSS_CLUES).map(n=>parseInt(n,10)).sort((a,b)=>a-b);
+  acrossEl.innerHTML = acrossNums
+    .map(n => '<div class="clue"><b>' + n + '.</b> ' + ACROSS_CLUES[n] + '</div>')
+    .join("");
+
+  downEl.innerHTML = DOWN_LIST
+    .slice()
+    .sort((a,b)=>a[0]-b[0])
+    .map(([n,_ans,clue]) => '<div class="clue"><b>' + n + '.</b> ' + clue + '</div>')
+    .join("");
+}
+
+/* Init */
+renderGrid();
+renderClues();
+
+/* Click on grid focuses keyboard (helps mobile) */
+gridEl.addEventListener("click", ()=>kbd.focus());
+</script>
+
+</body>
+</html>
