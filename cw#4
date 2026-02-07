@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Crosswords#4 - February 2026</title>
+
+  <style>
+    :root { --cell: 40px; --border: #111; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 18px;
+      color: #111;
+      background: #eaf7ea; /* soft light green */
+    }
+
+    h1 { margin: 0 0 8px; font-size: 34px; }
+
+    .instructions {
+      margin: 0 0 14px;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* Responsive: on small screens put clues below */
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(15, var(--cell));
+      grid-template-rows: repeat(15, var(--cell));
+      user-select: none;
+      border: 0;
+      background: transparent;
+    }
+
+    .cell {
+      position: relative;
+      width: var(--cell);
+      height: var(--cell);
+      border: 1px solid var(--border);
+      box-sizing: border-box;
+      background: #fff;
+    }
+
+    .cell.block {
+      background: #000;
+    }
+
+    .num {
+      position: absolute;
+      top: 2px;
+      left: 3px;
+      font-size: 10px;
+      font-weight: normal;
+      line-height: 1;
+      color: #111;
+      pointer-events: none;
+    }
+
+    .ch {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 18px;
+      color: #111;
+      pointer-events: none;
+    }
+
+    .ch.wrong-letter {
+      color: #c1121f; /* red for wrong letters */
+    }
+
+    .cell.selected {
+      outline: 3px solid #3b82f6;
+      outline-offset: -3px;
+    }
+
+    .cell.in-word {
+      background: #eef6ff;
+    }
+
+    .cell.block.selected,
+    .cell.block.in-word {
+      outline: none;
+      background: #000;
+    }
+
+    /* Blink feedback (word highlight) */
+    @keyframes blinkGreen { 0%,100%{ background:#e8fff0; } 50%{ background:#9ef0b7; } }
+    @keyframes blinkRed   { 0%,100%{ background:#ffecec; } 50%{ background:#ff9a9a; } }
+
+    .blink-green { animation: blinkGreen 420ms ease-in-out 0s 2; }
+    .blink-red   { animation: blinkRed   420ms ease-in-out 0s 2; }
+
+    /* Clues */
+    .panel h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .panel h3 {
+      margin: 14px 0 6px;
+      font-size: 15px;
+    }
+
+    .clues {
+      columns: 2;
+      column-gap: 18px;
+    }
+
+    @media (max-width: 980px) {
+      .clues { columns: 1; }
+    }
+
+    .clue {
+      break-inside: avoid;
+      margin: 0 0 7px;
+      font-size: 13px;
+      line-height: 1.25;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin: 0 0 12px;
+    }
+
+    button {
+      padding: 7px 10px;
+      border: 1px solid #bbb;
+      background: #fff;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    button:hover { background: #f4f4f4; }
+
+    .status {
+      font-size: 13px;
+      color: #333;
+    }
+
+    /* Hidden input for mobile keyboard reliability */
+    input.hidden {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Crosswords#4 - February 2026</h1>
+
+  <p class="instructions">
+    Click once to select words <b>ACROSS</b>, click a second time on the square to select the words <b>DOWN</b>.
+  </p>
+
+  <p class="instructions">
+    Source: adapted for educational purposes from Fleming, Puzzle 5.
+  </p>
+
+  <p class="instructions">
+    Good luck!
+  </p>
+
+  <div class="toolbar">
+    <button id="toggleDir">Direction: <b id="dirLabel">ACROSS</b></button>
+    <button id="checkWord">Check word</button>
+    <button id="clearWord">Clear word</button>
+    <span class="status" id="status"></span>
+  </div>
+
+  <div class="layout">
+    <div>
+      <div id="grid" class="grid" aria-label="Crossword grid"></div>
+      <input id="kbd" class="hidden" inputmode="latin" autocomplete="off" autocapitalize="characters" />
+    </div>
+
+    <div class="panel">
+      <h2>Clues</h2>
+
+      <h3>Across</h3>
+      <div class="clues" id="acrossClues"></div>
+
+      <h3>Down</h3>
+      <div class="clues" id="downClues"></div>
+    </div>
+  </div>
+
+<script>
+/* SOLUTION GRID (Crossword #4 exact 15x15) */
+const SOLUTION_ROWS = [
+  "SPITE#COAT#HAM#",
+  "HONOR#ONCE#AGED",
+  "ULTRA#PLEA#ZERO",
+  "TOES#SPY##TANGO",
+  "##ROUTE#SHORTER",
+  "OFF#SIR#HEED###",
+  "DEALER#TON#OATS",
+  "DECOR#AWE#SUSHI",
+  "SLEW#PRO#GASPED",
+  "###ITEM#ALL#AYE",
+  "SCENERY#MOTOR##",
+  "LANCE##NOW#PAPA",
+  "INTO#LIEU#BEGIN",
+  "DORM#ICON#ERUPT",
+  "#EYE#TENT#GASES",
+];
+
+/* ACROSS CLUES (by number) */
+const ACROSS_CLUES = {
+  1:  "petty desire to hurt or annoy",
+  6:  "outer layer of clothing",
+  10: "pork from a pig’s leg",
+
+  13: "respect or high regard",
+  14: "one time; previously",
+  15: "made old; not new",
+
+  17: "extremely; beyond the usual",
+  18: "urgent request; appeal",
+  19: "the number 0; nothing",
+
+  20: "digits on the foot",
+  21: "secret agent",
+  22: "dramatic ballroom dance from Argentina",
+
+  23: "path or way to go",
+  25: "not as long",
+
+  27: "not on; switched down",
+  29: "polite title for a man",
+  30: "pay attention to; listen to",
+
+  31: "person who sells, especially cars or cards",
+  33: "2,000 pounds (US)",
+  34: "cereal grain often eaten as oatmeal",
+
+  38: "style of furnishing/decoration",
+  39: "wonder mixed with respect",
+  40: "Japanese food with rice (often with fish)",
+
+  41: "large number; a lot",
+  42: "professional; expert",
+  43: "breathed in suddenly (in shock)",
+
+  44: "a single thing on a list",
+  46: "every one; the whole amount",
+  47: "“yes” in a vote (old-fashioned)",
+
+  48: "natural view/landscape, especially on stage or outdoors",
+  51: "engine; machine that produces motion",
+
+  53: "long spear used in jousting",
+  54: "at this time",
+  55: "father (informal)",
+
+  58: "to the inside of",
+  59: "instead (as in “in lieu of”)",
+  61: "start",
+
+  62: "student residence building",
+  63: "widely recognized symbol",
+  64: "burst out (like a volcano)",
+
+  65: "organ of sight",
+  66: "fabric shelter",
+  67: "airborne substances (plural)",
+};
+
+/* DOWN CLUES (list of [number, answer, clue]) */
+const DOWN_LIST = [
+  [1,  "SHUT",       "close firmly"],
+  [2,  "POLO",       "sport played on horseback"],
+  [3,  "INTERFACE",  "point where two systems meet and interact"],
+  [4,  "TORSO",      "the trunk of the body (without head/limbs)"],
+  [5,  "ERA",        "a distinct period of time"],
+  [6,  "COPPER",     "reddish-brown metal; chemical symbol Cu"],
+  [7,  "ONLY",       "just; and no one/nothing else"],
+  [8,  "ACE",        "top card in many games; also, an expert"],
+  [9,  "TEA",        "hot drink made by steeping leaves"],
+  [10, "HAZARDOUS",  "dangerous; risky"],
+  [11, "AGENT",      "person who acts for another; representative"],
+  [12, "MERGE",      "combine into one"],
+
+  [16, "DOOR",       "hinged barrier that opens/closes an entrance"],
+
+  [21, "STIR",       "mix with a spoon; also, provoke"],
+  [22, "TOE",        "one digit of the foot"],
+  [24, "USER",       "person who uses something"],
+  [25, "SHOE",       "footwear"],
+  [26, "HEN",        "adult female chicken"],
+  [27, "ODDS",       "chances; likelihood"],
+  [28, "FEEL",       "sense by touch; also, experience an emotion"],
+  [32, "LOWINCOME",  "earning little money"],
+  [33, "TWO",        "the number 2"],
+  [35, "ASPARAGUS",  "green spear-shaped vegetable"],
+  [36, "THEY",       "pronoun for people/things previously mentioned"],
+  [37, "SIDE",       "an edge; one part of something"],
+  [39, "ARMY",       "large organized military force"],
+  [40, "SALT",       "common seasoning; sodium chloride"],
+  [42, "PER",        "for each"],
+  [43, "GLOW",       "shine softly"],
+  [45, "TEE",        "a golf ball support; also a T-shaped pipe fitting"],
+  [46, "AMOUNT",     "quantity; total"],
+  [48, "SLID",       "past tense of “slide” (informal form)"],
+  [49, "CANOE",      "narrow boat paddled by hand"],
+  [50, "ENTRY",      "act of ent]()
