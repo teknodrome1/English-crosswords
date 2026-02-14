@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Crosswords#5 - February 2026</title>
+
+  <style>
+    :root { --cell: 40px; --border: #111; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 18px;
+      color: #111;
+      background: #eaf7ea; /* soft light green */
+    }
+
+    h1 { margin: 0 0 8px; font-size: 34px; }
+
+    .instructions {
+      margin: 0 0 14px;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* Responsive: on small screens put clues below */
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(15, var(--cell));
+      grid-template-rows: repeat(15, var(--cell));
+      user-select: none;
+      border: 0;
+      background: transparent;
+    }
+
+    .cell {
+      position: relative;
+      width: var(--cell);
+      height: var(--cell);
+      border: 1px solid var(--border);
+      box-sizing: border-box;
+      background: #fff;
+    }
+
+    .cell.block { background: #000; }
+
+    .num {
+      position: absolute;
+      top: 2px;
+      left: 3px;
+      font-size: 10px;
+      font-weight: normal;
+      line-height: 1;
+      color: #111;
+      pointer-events: none;
+    }
+
+    .ch {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 18px;
+      color: #111;
+      pointer-events: none;
+    }
+
+    .ch.wrong-letter { color: #c1121f; } /* red for wrong letters */
+
+    .cell.selected {
+      outline: 3px solid #3b82f6;
+      outline-offset: -3px;
+    }
+
+    .cell.in-word { background: #eef6ff; }
+
+    .cell.block.selected,
+    .cell.block.in-word {
+      outline: none;
+      background: #000;
+    }
+
+    /* Blink feedback (word highlight) */
+    @keyframes blinkGreen { 0%,100%{ background:#e8fff0; } 50%{ background:#9ef0b7; } }
+    @keyframes blinkRed   { 0%,100%{ background:#ffecec; } 50%{ background:#ff9a9a; } }
+
+    .blink-green { animation: blinkGreen 420ms ease-in-out 0s 2; }
+    .blink-red   { animation: blinkRed   420ms ease-in-out 0s 2; }
+
+    /* Clues */
+    .panel h2 { margin: 0 0 10px; font-size: 18px; }
+    .panel h3 { margin: 14px 0 6px; font-size: 15px; }
+
+    .clues {
+      columns: 2;
+      column-gap: 18px;
+    }
+
+    @media (max-width: 980px) {
+      .clues { columns: 1; }
+    }
+
+    .clue {
+      break-inside: avoid;
+      margin: 0 0 7px;
+      font-size: 13px;
+      line-height: 1.25;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin: 0 0 12px;
+    }
+
+    button {
+      padding: 7px 10px;
+      border: 1px solid #bbb;
+      background: #fff;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    button:hover { background: #f4f4f4; }
+
+    .status { font-size: 13px; color: #333; }
+
+    /* Hidden input for mobile keyboard reliability */
+    input.hidden {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Crosswords#5 - February 2026</h1>
+
+  <p class="instructions">
+    Click once to select words <b>ACROSS</b>, click a second time on the square to select the words <b>DOWN</b>.
+  </p>
+
+  <p class="instructions">
+    Source: inspired for educational purposes by Fleming's puzzle number 7.
+  </p>
+
+  <p class="instructions">
+    Good luck!
+  </p>
+
+  <div class="toolbar">
+    <button id="toggleDir">Direction: <b id="dirLabel">ACROSS</b></button>
+    <button id="checkWord">Check word</button>
+    <button id="clearWord">Clear word</button>
+    <span class="status" id="status"></span>
+  </div>
+
+  <div class="layout">
+    <div>
+      <div id="grid" class="grid" aria-label="Crossword grid"></div>
+      <input id="kbd" class="hidden" inputmode="latin" autocomplete="off" autocapitalize="characters" />
+    </div>
+
+    <div class="panel">
+      <h2>Clues</h2>
+
+      <h3>Across</h3>
+      <div class="clues" id="acrossClues"></div>
+
+      <h3>Down</h3>
+      <div class="clues" id="downClues"></div>
+    </div>
+  </div>
+
+<script>
+/* SOLUTION GRID (Crossword #4 exact 15x15) */
+const SOLUTION_ROWS = [
+  "CAP##ACID##RIM#",
+  "AGED#ROSE#FACES",
+  "TREE#CASE#OPERA",
+  "CELLS#SURPRISED",
+  "HESITATE#LED###",
+  "###VANS#BUS#TOE",
+  "DESERT#LAST#ANY",
+  "OVER##NOR##NICE",
+  "MEN#PLOW#SCALES",
+  "END#EAT#BEAT###",
+  "###HAM#MEASURES",
+  "INTERPRET#TRUST",
+  "CORAL#ARTS#ALSO",
+  "YOURS#FREE#LEAN",
+  "#NET##TYRO##DYE",
+];
+
+/* ACROSS CLUES (by number) */
+const ACROSS_CLUES = {
+  1:  "Headwear often worn outdoors",
+  4:  "Substance with a low pH",
+  8:  "Outer edge of a circular object",
+
+  11: "Advanced in years",
+  13: "Flower often associated with romance",
+  14: "Confronts directly",
+
+  16: "Tall plant with a trunk",
+  17: "Instance or example",
+  18: "Dramatic work set to music",
+
+  19: "Basic biological units",
+  21: "Taken unexpectedly",
+  23: "Pause before acting",
+
+  25: "Guided or directed",
+  26: "Boxy vehicles often used for transport",
+  27: "Public transport vehicle",
+  28: "Digit at the end of a foot",
+
+  31: "Arid region",
+  34: "Final in sequence",
+  35: "One or more without restriction",
+
+  36: "Above or finished",
+  37: "Coordinating conjunction",
+  38: "Pleasant or agreeable",
+
+  39: "Adult males",
+  40: "Farm tool for turning soil",
+  42: "Measuring devices or musical sequences",
+
+  44: "Conclusion",
+  45: "Consume food",
+  46: "Defeat or rhythmic pulse",
+
+  47: "Cured pork cut",
+  48: "Quantifies",
+
+  52: "Explain the meaning of",
+  56: "Firm belief in reliability",
+
+  57: "Marine organism forming reefs",
+  58: "Creative disciplines",
+  60: "In addition",
+
+  61: "Belonging to you",
+  62: "Without cost",
+  63: "Incline or slim",
+
+  64: "Mesh used to catch",
+  65: "Beginner",
+  66: "Substance used to color"
+};
+
+/* DOWN CLUES (list of [number, answer, clue]) */
+const DOWN_LIST = [
+  [1,  "CATCH",    "Capture or grab"],
+  [2,  "AGREE",    "Be in accord"],
+  [3,  "PEELS",    "Removes outer layers"],
+  [4,  "ARC",      "Part of a circle"],
+  [5,  "COASTS",   "Shores or glides without power"],
+  [6,  "ISSUE",    "Topic or problem"],
+  [7,  "DEER",     "Hoofed woodland animal"],
+  [8,  "RAPID",    "Very fast"],
+  [9,  "ICES",     "Chills or frosts"],
+  [10, "MERE",     "Nothing more than"],
+  [12, "DELIVER",  "Bring to a recipient"],
+  [14, "FOREST",   "Large wooded area"],
+  [15, "SAD",      "Feeling sorrow"],
+  [20, "STAR",     "Celestial body"],
+  [22, "PLUS",     "In addition"],
+  [24, "ANT",      "Small industrious insect"],
+  [27, "BAR",      "Establishment serving drinks"],
+  [28, "TAIL",     "Rear appendage"],
+  [29, "ONCE",     "Formerly or one time"],
+  [30, "EYES",     "Organs of sight"],
+  [31, "DOME",     "Rounded roof structure"],
+  [32, "EVEN",     "Level or equal"],
+  [33, "SEND",     "Dispatch"],
+  [34, "LOW",      "Not high"],
+  [37, "NOT",      "Word expressing negation"],
+  [38, "NATURAL",  "Not artificial"],
+  [40, "PEARLS",   "Lustrous gems from oysters"],
+  [41, "LAMP",     "Light-producing device"],
+  [42, "SEA",      "Vast body of salt water"],
+  [43, "CAST",     "Group of performers"],
+  [46, "BETTER",   "Superior in quality"],
+  [47, "HEART",    "Organ that pumps blood"],
+  [48, "MERRY",    "Cheerful"],
+  [49, "RULED",    "Governed"],
+  [50, "ESSAY",    "Short written composition"],
+  [51, "STONE",    "Hard mineral material"],
+  [52, "ICY",      "Extremely cold"],
+  [53, "NOON",     "Midday"],
+  [54, "TRUE",     "Correct or accurate"],
+  [55, "RAFT",     "Floating platform"],
+  [59, "SEO",      "Practice of improving website visibility"]
+];
+
+const H = 15, W = 15;
+const gridEl = document.getElementById("grid");
+const kbd = document.getElementById("kbd");
+const statusEl = document.getElementById("status");
+
+const isBlock = (r,c) => SOLUTION_ROWS[r][c] === "#";
+const sol = (r,c) => SOLUTION_ROWS[r][c];
+const user = Array.from({length:H}, () => Array.from({length:W}, () => ""));
+
+let dir = "across";
+let selected = {r:0,c:0};
+
+const cellEls = Array.from({length:H}, () => Array.from({length:W}, () => null));
+
+/* compute numbering */
+const nums = Array.from({length:H}, () => Array.from({length:W}, () => null));
+(function computeNumbers(){
+  let n = 1;
+  for (let r=0;r<H;r++){
+    for (let c=0;c<W;c++){
+      if (isBlock(r,c)) continue;
+      const startAcross = (c===0 || isBlock(r,c-1)) && (c+1<W && !isBlock(r,c+1));
+      const startDown   = (r===0 || isBlock(r-1,c)) && (r+1<H && !isBlock(r+1,c));
+      if (startAcross || startDown) nums[r][c] = n++;
+    }
+  }
+})();
+
+function firstOpenCell(){
+  for (let r=0;r<H;r++){
+    for (let c=0;c<W;c++){
+      if (!isBlock(r,c)) return {r,c};
+    }
+  }
+  return {r:0,c:0};
+}
+selected = firstOpenCell();
+
+function renderGrid(){
+  gridEl.innerHTML = "";
+  for (let r=0;r<H;r++){
+    for (let c=0;c<W;c++){
+      const d = document.createElement("div");
+      d.className = "cell" + (isBlock(r,c) ? " block" : "");
+      d.dataset.r = r; d.dataset.c = c;
+
+      if (!isBlock(r,c) && nums[r][c] != null){
+        const n = document.createElement("div");
+        n.className = "num";
+        n.textContent = nums[r][c];
+        d.appendChild(n);
+      }
+
+      if (!isBlock(r,c)){
+        const ch = document.createElement("div");
+        ch.className = "ch";
+        ch.textContent = user[r][c];
+        d.appendChild(ch);
+      }
+
+      d.addEventListener("mousedown", (e)=>{
+        e.preventDefault();
+
+        if (selected.r === r && selected.c === c) {
+          toggleDirInternal();
+        } else {
+          selectCell(r,c);
+        }
+
+        kbd.focus();
+      });
+
+      gridEl.appendChild(d);
+      cellEls[r][c] = d;
+    }
+  }
+  paintSelection();
+}
+
+function setStatus(msg){ statusEl.textContent = msg || ""; }
+
+function setDir(newDir){
+  dir = newDir;
+  document.getElementById("dirLabel").textContent = dir.toUpperCase();
+  paintSelection();
+}
+
+function toggleDirInternal(){
+  setDir(dir === "across" ? "down" : "across");
+}
+
+document.getElementById("toggleDir").addEventListener("click", ()=>{
+  toggleDirInternal();
+  kbd.focus();
+});
+document.getElementById("checkWord").addEventListener("click", ()=>{
+  checkCurrentWord(true);
+  kbd.focus();
+});
+document.getElementById("clearWord").addEventListener("click", ()=>{
+  clearCurrentWord();
+  kbd.focus();
+});
+
+function selectCell(r,c){
+  if (isBlock(r,c)) return;
+  selected = {r,c};
+  paintSelection();
+}
+
+function getWordCells(r,c,dir){
+  let sr=r, sc=c;
+  if (dir==="across"){
+    while (sc>0 && !isBlock(sr, sc-1)) sc--;
+    const cells=[];
+    while (sc<W && !isBlock(sr, sc)) { cells.push({r:sr,c:sc}); sc++; }
+    return cells;
+  } else {
+    while (sr>0 && !isBlock(sr-1, sc)) sr--;
+    const cells=[];
+    while (sr<H && !isBlock(sr, sc)) { cells.push({r:sr,c:sc}); sr++; }
+    return cells;
+  }
+}
+
+function paintSelection(){
+  for (let r=0;r<H;r++){
+    for (let c=0;c<W;c++){
+      const el = cellEls[r][c];
+      if (!el) continue;
+      el.classList.remove("selected","in-word");
+    }
+  }
+
+  const word = getWordCells(selected.r, selected.c, dir);
+  for (const p of word) cellEls[p.r][p.c].classList.add("in-word");
+  cellEls[selected.r][selected.c].classList.add("selected");
+
+  const wStart = word[0];
+  const n = nums[wStart.r][wStart.c];
+  if (n != null){
+    const clue = (dir==="across")
+      ? (ACROSS_CLUES[n] || "")
+      : (DOWN_LIST.find(x=>x[0]===n)?.[2] || "");
+    setStatus(dir.toUpperCase() + " " + n + ": " + clue);
+  } else {
+    setStatus("");
+  }
+}
+
+function move(deltaR, deltaC){
+  let r=selected.r, c=selected.c;
+  while (true){
+    r += deltaR; c += deltaC;
+    if (r<0||r>=H||c<0||c>=W) return;
+    if (!isBlock(r,c)) { selectCell(r,c); return; }
+  }
+}
+
+function nextCell(){ (dir==="across") ? move(0,1) : move(1,0); }
+function prevCell(){ (dir==="across") ? move(0,-1) : move(-1,0); }
+
+function setLetterAt(r,c,letter){
+  user[r][c] = letter;
+  const ch = cellEls[r][c].querySelector(".ch");
+  if (ch) {
+    ch.textContent = letter;
+
+    if (letter && letter.toUpperCase() !== sol(r,c).toUpperCase()) ch.classList.add("wrong-letter");
+    else ch.classList.remove("wrong-letter");
+  }
+}
+
+function blinkCells(cells, color){
+  const cls = (color==="green") ? "blink-green" : "blink-red";
+  for (const p of cells){
+    const el = cellEls[p.r][p.c];
+    el.classList.remove("blink-green","blink-red");
+    void el.offsetWidth;
+    el.classList.add(cls);
+    el.addEventListener("animationend", ()=>el.classList.remove(cls), {once:true});
+  }
+}
+
+function checkWordCells(cells, withBlink){
+  const userWord = cells.map(p => (user[p.r][p.c] || "")).join("");
+  const solWord  = cells.map(p => sol(p.r,p.c)).join("");
+
+  if ([...userWord].some(ch => !ch)) return null;
+
+  const ok = userWord.toUpperCase() === solWord.toUpperCase();
+  if (withBlink) blinkCells(cells, ok ? "green" : "red");
+  return ok;
+}
+
+function checkCurrentWord(withBlink){
+  const cells = getWordCells(selected.r, selected.c, dir);
+  const ok = checkWordCells(cells, withBlink);
+  if (ok === null) { setStatus("Fill the entire word to check."); return false; }
+  setStatus(ok ? "Correct." : "Not correct yet.");
+  return ok;
+}
+
+function clearCurrentWord(){
+  const cells = getWordCells(selected.r, selected.c, dir);
+  for (const p of cells) setLetterAt(p.r,p.c,"");
+  setStatus("Cleared word.");
+}
+
+function handleChar(ch){
+  if (!/^[A-Za-z]$/.test(ch)) return;
+
+  const activeWordCells = getWordCells(selected.r, selected.c, dir);
+
+  setLetterAt(selected.r, selected.c, ch.toUpperCase());
+
+  const complete = activeWordCells.every(p => user[p.r][p.c]);
+
+  nextCell();
+
+  if (complete) {
+    checkWordCells(activeWordCells, true);
+  }
+}
+
+document.addEventListener("keydown", (e)=>{
+  const key = e.key;
+
+  if (key === "Tab") { e.preventDefault(); toggleDirInternal(); return; }
+
+  if (key === "ArrowUp")    { e.preventDefault(); move(-1,0); return; }
+  if (key === "ArrowDown")  { e.preventDefault(); move(1,0);  return; }
+  if (key === "ArrowLeft")  { e.preventDefault(); move(0,-1); return; }
+  if (key === "ArrowRight") { e.preventDefault(); move(0,1);  return; }
+
+  if (key === "Backspace") {
+    e.preventDefault();
+    if (user[selected.r][selected.c]) {
+      setLetterAt(selected.r, selected.c, "");
+    } else {
+      prevCell();
+      setLetterAt(selected.r, selected.c, "");
+    }
+    return;
+  }
+
+  if (key === "Enter") {
+    e.preventDefault();
+    checkCurrentWord(true);
+    return;
+  }
+
+  if (key.length === 1) {
+    e.preventDefault();
+    handleChar(key);
+  }
+});
+
+/* Render clue lists */
+function renderClues(){
+  const acrossEl = document.getElementById("acrossClues");
+  const downEl = document.getElementById("downClues");
+
+  const acrossNums = Object.keys(ACROSS_CLUES).map(n=>parseInt(n,10)).sort((a,b)=>a-b);
+  acrossEl.innerHTML = acrossNums
+    .map(n => '<div class="clue"><b>' + n + '.</b> ' + ACROSS_CLUES[n] + '</div>')
+    .join("");
+
+  downEl.innerHTML = DOWN_LIST
+    .slice()
+    .sort((a,b)=>a[0]-b[0])
+    .map(([n,_ans,clue]) => '<div class="clue"><b>' + n + '.</b> ' + clue + '</div>')
+    .join("");
+}
+
+/* Init */
+renderGrid();
+renderClues();
+
+/* Click on grid focuses keyboard (helps mobile) */
+gridEl.addEventListener("click", ()=>kbd.focus());
+</script>
+
+</body>
+</html>
