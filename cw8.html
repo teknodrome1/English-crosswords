@@ -1,169 +1,90 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Crossword number 8 - March 2026</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 
-  <style>
-    :root { --cell: 40px; --border: #111; }
+<title>Crossword number 8 - March 2026</title>
 
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      margin: 18px;
-      color: #111;
-      background: #eaf7ea; /* soft light green */
-    }
+<style>
+:root { --cell: 40px; --border: #111; }
 
-    h1 { margin: 0 0 8px; font-size: 34px; }
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 18px;
+  color: #111;
+  background: #eaf7ea;
+}
 
-    .instructions {
-      margin: 0 0 14px;
-      font-size: 14px;
-      line-height: 1.35;
-    }
+h1 { margin: 0 0 8px; font-size: 34px; }
 
-    .layout {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 20px;
-      align-items: start;
-    }
+.instructions {
+  margin: 0 0 14px;
+  font-size: 14px;
+  line-height: 1.35;
+}
 
-    /* Responsive: on small screens put clues below */
-    @media (max-width: 980px) {
-      .layout { grid-template-columns: 1fr; }
-    }
+.layout {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 20px;
+  align-items: start;
+}
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(15, var(--cell));
-      grid-template-rows: repeat(15, var(--cell));
-      user-select: none;
-      border: 0;
-      background: transparent;
-    }
+@media (max-width: 980px) {
+  .layout { grid-template-columns: 1fr; }
+}
 
-    .cell {
-      position: relative;
-      width: var(--cell);
-      height: var(--cell);
-      border: 1px solid var(--border);
-      box-sizing: border-box;
-      background: #fff;
-    }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(15, var(--cell));
+  grid-template-rows: repeat(15, var(--cell));
+  user-select: none;
+}
 
-    .cell.block { background: #000; }
+.cell {
+  position: relative;
+  width: var(--cell);
+  height: var(--cell);
+  border: 1px solid var(--border);
+  background: #fff;
+}
 
-    .num {
-      position: absolute;
-      top: 2px;
-      left: 3px;
-      font-size: 10px;
-      font-weight: normal;
-      line-height: 1;
-      color: #111;
-      pointer-events: none;
-    }
+.cell.block { background: #000; }
 
-    .ch {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      font-weight: 700;
-      font-size: 18px;
-      color: #111;
-      pointer-events: none;
-    }
+.num {
+  position: absolute;
+  top: 2px;
+  left: 3px;
+  font-size: 10px;
+}
 
-    .ch.wrong-letter { color: #c1121f; } /* red for wrong letters */
-
-    .cell.selected {
-      outline: 3px solid #3b82f6;
-      outline-offset: -3px;
-    }
-
-    .cell.in-word { background: #eef6ff; }
-
-    .cell.block.selected,
-    .cell.block.in-word {
-      outline: none;
-      background: #000;
-    }
-
-    /* Blink feedback (word highlight) */
-    @keyframes blinkGreen { 0%,100%{ background:#e8fff0; } 50%{ background:#9ef0b7; } }
-    @keyframes blinkRed   { 0%,100%{ background:#ffecec; } 50%{ background:#ff9a9a; } }
-
-    .blink-green { animation: blinkGreen 420ms ease-in-out 0s 2; }
-    .blink-red   { animation: blinkRed   420ms ease-in-out 0s 2; }
-
-    /* Clues */
-    .panel h2 { margin: 0 0 10px; font-size: 18px; }
-    .panel h3 { margin: 14px 0 6px; font-size: 15px; }
-
-    .clues {
-      columns: 2;
-      column-gap: 18px;
-    }
-
-    @media (max-width: 980px) {
-      .clues { columns: 1; }
-    }
-
-    .clue {
-      break-inside: avoid;
-      margin: 0 0 7px;
-      font-size: 13px;
-      line-height: 1.25;
-    }
-
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      margin: 0 0 12px;
-    }
-
-    button {
-      padding: 7px 10px;
-      border: 1px solid #bbb;
-      background: #fff;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 13px;
-    }
-    button:hover { background: #f4f4f4; }
-
-    .status { font-size: 13px; color: #333; }
-
-    /* Hidden input for mobile keyboard reliability */
-    input.hidden {
-      position: absolute;
-      left: -9999px;
-      width: 1px;
-      height: 1px;
-      opacity: 0;
-    }
-  </style>
+.ch {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 18px;
+}
+</style>
 </head>
 
 <body>
-  <h1>Crossword number 8 - March 2026</h1>
 
-  <p class="instructions">
-    Click once to select words <b>ACROSS</b>, click a second time on the square to select the words <b>DOWN</b>.
-  </p>
+<h1>Crossword number 8 - March 2026</h1>
 
-  <p class="instructions">
-    Inspired for educational purposes by Fleming Puzzle 9
-  </p>
+<p class="instructions">
+Click once to select words <b>ACROSS</b>, click a second time on the square to select the words <b>DOWN</b>.
+</p>
 
-  <p class="instructions">
-    Good luck!
-  </p>
+<p class="instructions">
+Inspired for educational purposes by Fleming Puzzle 9
+</p>
+
+<p class="instructions">
+Good luck!
+</p>
 
   <div class="toolbar">
     <button id="toggleDir">Direction: <b id="dirLabel">ACROSS</b></button>
